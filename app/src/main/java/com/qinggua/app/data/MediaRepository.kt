@@ -28,8 +28,8 @@ object MediaRepository {
             MediaStore.MediaColumns.ORIENTATION
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            base.add(MediaStore.MediaColumns.LATITUDE)
-            base.add(MediaStore.MediaColumns.LONGITUDE)
+            base.add("latitude")
+            base.add("longitude")
             base.add(MediaStore.MediaColumns.DATE_TAKEN)
         }
         if (isVideo) base.add(MediaStore.Video.Media.DURATION)
@@ -69,8 +69,8 @@ object MediaRepository {
             mimeType = strOf(MediaStore.MediaColumns.MIME_TYPE),
             isVideo = isVideo,
             durationMs = if (isVideo) longOf(MediaStore.Video.Media.DURATION) else 0L,
-            latitude = doubleOf(MediaStore.MediaColumns.LATITUDE),
-            longitude = doubleOf(MediaStore.MediaColumns.LONGITUDE),
+            latitude = doubleOf("latitude"),
+            longitude = doubleOf("longitude"),
             orientation = intOf(MediaStore.MediaColumns.ORIENTATION),
             width = intOf(MediaStore.MediaColumns.WIDTH),
             height = intOf(MediaStore.MediaColumns.HEIGHT)
