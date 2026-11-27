@@ -21,12 +21,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: 设置 Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: 安装 Android SDK 组件
-        # 显式安装编译所需的组件，避免 AGP 自动下载时卡在许可协议
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+      - name: 准备 Android SDK
+        # GitHub 的 ubuntu-latest 已预装 Android SDK，无需 setup-android 插件
+        # （该插件默认安装的 tools 包已被 Google 下架，会直接失败）
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
 
       - name: 设置 Gradle 8.9
         uses: gradle/actions/setup-gradle@v3
