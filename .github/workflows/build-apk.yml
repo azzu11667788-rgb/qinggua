@@ -1,0 +1,47 @@
+name: 构建清瓜 APK
+
+# 触发时机：
+# 1. 手动点 "Run workflow"（推荐第一次用这个）
+# 2. 推送代码到 main / master 分支时自动构建
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 设置 JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: 设置 Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 设置 Gradle 8.9
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.9
+
+      - name: 生成 Gradle Wrapper
+        # 工程里没有 gradle-wrapper.jar（二进制），这里现场生成，绕开这个限制
+        run: gradle wrapper --gradle-version 8.9 --distribution-type bin
+
+      - name: 编译 Debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: 重命名 APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/清瓜-v1.0.apk
+
+      - name: 上传 APK 构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: 清瓜-APK
+          path: app/build/outputs/apk/debug/清瓜-v1.0.apk
+          retention-days: 90
