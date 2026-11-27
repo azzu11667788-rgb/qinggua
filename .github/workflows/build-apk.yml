@@ -24,6 +24,10 @@ jobs:
       - name: 设置 Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: 安装 Android SDK 组件
+        # 显式安装编译所需的组件，避免 AGP 自动下载时卡在许可协议
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
       - name: 设置 Gradle 8.9
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -37,11 +41,11 @@ jobs:
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: 重命名 APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/清瓜-v1.0.apk
+        run: cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/qinggua-v1.0.apk
 
       - name: 上传 APK 构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: 清瓜-APK
-          path: app/build/outputs/apk/debug/清瓜-v1.0.apk
+          name: qinggua-apk
+          path: app/build/outputs/apk/debug/qinggua-v1.0.apk
           retention-days: 90
